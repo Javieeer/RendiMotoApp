@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "05-rendimotoApp",
-    "slug": "05-rendimotoApp",
+    "name": "RendiMoto",
+    "slug": "rendimoto",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "05rendimotoapp",
+    "scheme": "RendiMotoApp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
