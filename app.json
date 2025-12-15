@@ -4,7 +4,7 @@
     "slug": "rendimoto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/rendimoto-logo.png",
     "scheme": "RendiMotoApp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
