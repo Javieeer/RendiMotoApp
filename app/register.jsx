@@ -1,10 +1,13 @@
 import Header from '@/components/header';
 import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Register() {
+
+  const router = useRouter();
 
   /* Declaramos el estado para manejar el formulario  */
   const [form, setForm] = useState({
@@ -91,25 +94,58 @@ export default function Register() {
     };
 
     try {
-      console.log('Payload a backend:', payload); // BORRAR LUEGO --------------------
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/delivery`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
 
-      const response = await fetch('https://tu-backend.com/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      let data = null;
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Registro exitoso:', data); // Cambiar según lo que devuelva el backend
-        router.replace('/login'); 
-      } else {
-        alert(data.message || 'Error al registrar el usuario');
+      try {
+        data = await response.json();
+      } catch {
+        // backend no devolvió JSON
       }
+
+      if (!response.ok) {
+        // 🟡 Conflictos comunes
+        if (response.status === 409) {
+          alert(data?.message || 'El usuario ya existe');
+          return;
+        }
+
+        // 🟡 Validaciones
+        if (response.status === 400) {
+          alert(data?.message || 'Datos inválidos');
+          return;
+        }
+
+        alert(data?.message || 'Error al registrar el usuario');
+        return;
+      }
+
+      // ✅ Registro OK
+      if (response.ok) {
+        Alert.alert(
+          'Registro exitoso 🎉',
+          'Tu cuenta fue creada correctamente. Ahora inicia sesión.',
+          [
+            {
+              text: 'Iniciar sesión',
+              onPress: () => router.replace('/login'),
+            },
+          ]
+        );
+        return;
+      }
+
     } catch (err) {
       console.error(err);
-      alert('Ocurrió un error al registrar. Intenta de nuevo.');
+      alert('No se pudo conectar con el servidor');
     }
   };
 

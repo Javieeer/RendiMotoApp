@@ -1,4 +1,5 @@
 import Header from '@/components/header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -12,6 +13,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   
+  /* VARIABLES DE ENTORNO */
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
   /* Manejo de navegación */
   const router = useRouter();
 
@@ -34,31 +38,45 @@ export default function LoginScreen() {
     try {
       const payload = {
         email: form.email.trim().toLowerCase(),
-        password: form.password, 
+        password: form.password,
       };
 
-      console.log('Login payload:', payload); // BORRAR LUEGO --------------------
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/delivery/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
 
-      const response = await fetch('https://tu-backend.com/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      let data = null;
 
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Login exitoso:', data);
-        // Redirigir a pantalla principal
-        router.replace('/home'); // REVISAR LA RUTA DE LA PANTALLA PRINCIPAL DEL USER REGISTRADO
-      } else {
-        alert(data.message || 'Error al iniciar sesión');
+      try {
+        data = await response.json();
+      } catch {
+        alert('Respuesta inválida del servidor');
+        return;
       }
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          alert('Correo o contraseña incorrectos');
+          return;
+        }
+
+        alert(data?.message || 'Error al iniciar sesión');
+        return;
+      }
+
+      // ✅ Login OK
+      if (response.ok) {
+        await AsyncStorage.setItem('token', data.token);
+        router.replace('/home');
+      }
+
     } catch (err) {
-      console.error(err);
-      alert('Ocurrió un error. Intenta de nuevo.');
+      alert('No se pudo conectar con el servidor');
     }
   };
 
