@@ -1,0 +1,60 @@
+import { StyleSheet, Text, View } from 'react-native';
+
+export default function MovementItem({ movement }) {
+  const isIncome = movement.type === 'INCOME';
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.icon}>
+        {isIncome ? '➕' : '➖'}
+      </Text>
+
+      <View style={styles.info}>
+        <Text style={styles.description}>
+          {movement.description || 'Sin descripción'}
+        </Text>
+        <Text style={styles.date}>{movement.date}</Text>
+      </View>
+
+      <Text
+        style={[
+          styles.amount,
+          { color: isIncome ? '#2ECC71' : '#E74C3C' },
+        ]}
+      >
+        ${movement.amount.toLocaleString()}
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  icon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  info: {
+    flex: 1,
+  },
+  description: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  date: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
+  },
+  amount: {
+    fontWeight: '700',
+    fontSize: 15,
+  },
+});
