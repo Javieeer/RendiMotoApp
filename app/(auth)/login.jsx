@@ -1,4 +1,5 @@
 import Header from '@/components/header';
+import { useAuth } from '@/context/authContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -13,6 +14,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   
+  const { login } = useAuth();
+
   /* VARIABLES DE ENTORNO */
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -71,8 +74,14 @@ export default function LoginScreen() {
 
       // ✅ Login OK
       if (response.ok) {
+        /* Borrar en un futuro */
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('deliveryId', String(data.id));
+        /* -------------------- */
+        await login({
+          token: data.token,
+          deliveryId: data.id,
+        });
         router.replace('/home');
       }
 

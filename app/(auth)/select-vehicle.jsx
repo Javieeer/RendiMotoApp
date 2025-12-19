@@ -12,7 +12,12 @@ export default function SelectVehicleScreen() {
   };
 
   return (
-    <View style={{ padding: 24 }}>
+    <View style={
+      { 
+        padding: 24,
+        marginTop: 48,
+      }
+    }>
       <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 16 }}>
         Selecciona un vehículo
       </Text>

@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/authContext';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
@@ -6,6 +7,8 @@ import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View 
 export default function AppMenuOverlay({ visible, onClose }) {
 
   const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+  const { logout } = useAuth();
   
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
@@ -140,7 +143,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             danger
             onPress={() => {
               onClose();
-              // logout
+              logout();
             }}
           />
         </View>

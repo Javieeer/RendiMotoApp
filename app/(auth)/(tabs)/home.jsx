@@ -2,6 +2,7 @@ import AppHeader from '@/components/appHeader';
 import BalanceCard from '@/components/balanceCard';
 import MovementsList from '@/components/movementsList';
 import { useVehicle } from '@/context/vehicleContext';
+import { daysUntil } from '@/utils/alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -96,9 +97,24 @@ export default function HomeScreen() {
     return <Text>No se pudo cargar el balance</Text>;
   }
 
+  const rawSoatDays = daysUntil(activeVehicle.soatExpiration);
+
+  /* Días con SOAT */
+  const soatDays = rawSoatDays < 0 ? Math.abs(rawSoatDays) : rawSoatDays;
+
+  /* Días para renovar el SOAT */
+  const daysRemaining = Math.max(0, 365 - soatDays);
+
   return (
     <>
       <AppHeader />
+      {daysRemaining <= 30 && (
+        <View style={{ backgroundColor: '#FFF3CD', padding: 12, borderRadius: 8 }}>
+          <Text>
+            ⚠️ El SOAT vence en {daysRemaining} días
+          </Text>
+        </View>
+      )}
       <View style={{ padding: 16 }}>
         <BalanceCard balance={balance} />
         <MovementsList movements={movements} />

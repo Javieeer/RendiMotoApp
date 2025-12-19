@@ -1,4 +1,5 @@
 import AppMenuOverlay from '@/components/appMenuOverlay';
+import { AuthProvider } from '@/context/authContext';
 import { MenuProvider, useMenu } from '@/context/menuContext';
 import { VehicleProvider } from '@/context/vehicleContext';
 import { Stack } from 'expo-router';
@@ -19,11 +20,13 @@ export default function Layout() {
   return (
     <>
       <SafeAreaProvider>
-        <MenuProvider>
-          <VehicleProvider>
-            <RootContent />
-          </VehicleProvider>
-        </MenuProvider>
+        <AuthProvider>
+          <MenuProvider>
+            <VehicleProvider>
+              <RootContent />
+            </VehicleProvider>
+          </MenuProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </>
   );
