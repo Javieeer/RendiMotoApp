@@ -1,66 +1,57 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
-const VehicleContext = createContext();
+const VehicleContext = createContext(null);
+
+const VEHICLE_KEY = 'activeVehicleId';
 
 export function VehicleProvider({ children }) {
   const [vehicles, setVehicles] = useState([]);
   const [activeVehicle, setActiveVehicle] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadVehicles = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-
-        const res = await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/vehicles/delivery/4`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const text = await res.text();
-        const data = text ? JSON.parse(text) : null;
-
-        if (!isMounted) return;
-
-        const vehicles = data?.body ?? [];
-
-        setVehicles(vehicles);
-
-        if (vehicles.length === 1) {
-          setActiveVehicle(vehicles[0]);
-        }
-        if (vehicles.length > 0) {
-          setActiveVehicle(vehicles[0]);
-        }
-
-      } catch (e) {
-        console.error('Error cargando vehículos', e);
-      } finally {
-        if (isMounted) setLoading(false);
+  const loadVehicles = async (deliveryId, token) => {
+    const res = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/vehicles/delivery/${deliveryId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       }
-    };
+    );
 
-    loadVehicles();
+    const data = await res.json();
+    const list = data.body || [];
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    setVehicles(list);
+
+    if (list.length === 0) {
+      setActiveVehicle(null);
+      return;
+    }
+
+    const savedId = await AsyncStorage.getItem(VEHICLE_KEY);
+    if (savedId) {
+      const found = list.find(v => v.id === Number(savedId));
+      if (found) {
+        setActiveVehicle(found);
+        return;
+      }
+    }
+
+    setActiveVehicle(list[0]);
+    await AsyncStorage.setItem(VEHICLE_KEY, String(list[0].id));
+  };
+
+  const selectVehicle = async (vehicle) => {
+    setActiveVehicle(vehicle);
+    await AsyncStorage.setItem(VEHICLE_KEY, String(vehicle.id));
+  };
 
   return (
     <VehicleContext.Provider
       value={{
         vehicles,
         activeVehicle,
-        setActiveVehicle,
-        loading,
+        loadVehicles,
+        selectVehicle,
       }}
     >
       {children}

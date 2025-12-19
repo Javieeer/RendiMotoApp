@@ -5,69 +5,70 @@ import { useVehicle } from '@/context/vehicleContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 export default function HomeScreen() {
 
   const router = useRouter();
-  const { activeVehicle } = useVehicle();
+  const { activeVehicle, loadVehicles } = useVehicle();
 
   const [movements, setMovements] = useState([]);
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [switchingVehicle, setSwitchingVehicle] = useState(false);
 
-  /* const handleVehicleChange = () => {
-    console.log('Cambiar vehículo');
-    // luego: router.push('/select-vehicle')
-  }; */
+  useEffect(() => {
+    const init = async () => {
+      const token = await AsyncStorage.getItem('token');
+      const deliveryId = await AsyncStorage.getItem('deliveryId');
+
+      if (!deliveryId || !token) return;
+
+      await loadVehicles(Number(deliveryId), token);
+    };
+
+    init();
+  }, []);
 
   useEffect(() => {
     if (!activeVehicle) return;
 
     let isMounted = true;
 
+    setBalance(null); 
+    setMovements([]);
+
     const loadData = async () => {
       try {
+        setSwitchingVehicle(true); 
         const token = await AsyncStorage.getItem('token');
 
-        // 🔹 Movimientos
         const movementsRes = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${activeVehicle.id}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         const movementsJson = await movementsRes.json();
 
-        if (!movementsRes.ok) {
-          throw new Error(movementsJson.message || 'Error cargando movimientos');
-        }
-
-        // 🔹 Balance
         const balanceRes = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${activeVehicle.id}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-
+        
         const balanceJson = await balanceRes.json();
 
-        if (!balanceRes.ok) {
-          throw new Error(balanceJson.message || 'Error cargando balance');
-        }
+        if (!movementsRes.ok || !balanceRes.ok) throw new Error();
 
         if (isMounted) {
           setMovements(movementsJson);
           setBalance(balanceJson);
         }
       } catch (e) {
-        console.error('Error cargando home', e);
+        console.error(e);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -80,32 +81,27 @@ export default function HomeScreen() {
     };
   }, [activeVehicle]);
 
-  if (!activeVehicle) {
-    return <Text>No hay vehículo activo</Text>;
-  }
-
-  if (loading) {
-    return <ActivityIndicator size="large" />;
-  }
-
-  if (!balance) {
+  /* Centrar el cargando en la pantalla */
+  if (loading) return <Text
+      style={{
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: '50%',
+      }}
+    >
+      Cargando...
+    </Text>;
+  if (!balance && !switchingVehicle) {
     return <Text>No se pudo cargar el balance</Text>;
   }
-
-  const lastMovements = movements
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 5);
 
   return (
     <>
       <AppHeader />
       <View style={{ padding: 16 }}>
-        <View style={{ marginTop: 20 }}>
-          <BalanceCard balance={balance} />
-        </View>
-        <View style={{ marginTop: 24 }}>
-          <MovementsList movements={movements} />
-        </View>
+        <BalanceCard balance={balance} />
+        <MovementsList movements={movements} />
       </View>
     </>
   );

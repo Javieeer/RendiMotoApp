@@ -1,10 +1,14 @@
 import { useMenu } from '@/context/menuContext';
 import { useVehicle } from '@/context/vehicleContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+
 export default function AppHeader() {
+
+  const router = useRouter();
   const { openMenu } = useMenu();
   const { activeVehicle } = useVehicle();
   const insets = useSafeAreaInsets();
@@ -36,7 +40,7 @@ export default function AppHeader() {
         )}
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/select-vehicle')}>
         <Ionicons name="bicycle-outline" size={26} color="#333" />
       </TouchableOpacity>
     </View>

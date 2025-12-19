@@ -1,17 +1,49 @@
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function AppMenuOverlay({ visible, onClose }) {
-  const slideAnim = useRef(new Animated.Value(300)).current;
+
+  const SCREEN_HEIGHT = Dimensions.get('window').height;
+  
+  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: visible ? 0 : 300,
+      toValue: visible ? 0 : SCREEN_HEIGHT,
       duration: 260,
       easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
   }, [visible]);
+
+  const MenuItem = ({ icon, label, onPress, danger }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 14,
+      }}
+    >
+      <Ionicons
+        name={icon}
+        size={22}
+        color={danger ? '#E74C3C' : '#333'}
+        style={{ width: 30 }}
+      />
+      <Text
+        style={{
+          fontSize: 16,
+          fontWeight: '600',
+          color: danger ? '#E74C3C' : '#333',
+        }}
+      >
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View pointerEvents={visible ? 'auto' : 'none'} style={StyleSheet.absoluteFill}>
@@ -40,12 +72,77 @@ export default function AppMenuOverlay({ visible, onClose }) {
         ]}
       >
         <View>
-          <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 16 }}>
-            Menú
-          </Text>
-          <Text>Opción 1</Text>
-          <Text>Opción 2</Text>
-          <Text>Opción 3</Text>
+          {/* HEADER */}
+          <View style={{ marginBottom: 20 }}>
+            <Text style={{ fontSize: 18, fontWeight: '700' }}>
+              Javier
+            </Text>
+            <Text style={{ color: '#666', marginTop: 4 }}>
+              ABC123 · Yamaha MT15
+            </Text>
+          </View>
+
+          <View style={{ height: 1, backgroundColor: '#EEE', marginVertical: 12 }} />
+
+          {/* ACCIONES */}
+          <MenuItem
+            icon="swap-horizontal"
+            label="Cambiar vehículo"
+            onPress={() => {
+              onClose();
+              router.push('/select-vehicle');
+            }}
+          />
+
+          <MenuItem
+            icon="list"
+            label="Ver todos los movimientos"
+            onPress={() => {
+              onClose();
+              router.push('/movements');
+            }}
+          />
+
+          <MenuItem
+            icon="bar-chart"
+            label="Reportes"
+            onPress={() => {
+              onClose();
+              // futuro
+            }}
+          />
+
+          <View style={{ height: 1, backgroundColor: '#EEE', marginVertical: 12 }} />
+
+          {/* CONFIG */}
+          <MenuItem
+            icon="settings-outline"
+            label="Configuración"
+            onPress={() => {
+              onClose();
+            }}
+          />
+
+          <MenuItem
+            icon="help-circle-outline"
+            label="Ayuda"
+            onPress={() => {
+              onClose();
+            }}
+          />
+
+          <View style={{ height: 1, backgroundColor: '#EEE', marginVertical: 12 }} />
+
+          {/* LOGOUT */}
+          <MenuItem
+            icon="log-out-outline"
+            label="Cerrar sesión"
+            danger
+            onPress={() => {
+              onClose();
+              // logout
+            }}
+          />
         </View>
       </Animated.View>
     </View>

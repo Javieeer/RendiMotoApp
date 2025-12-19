@@ -1,9 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function BalanceCard({ balance }) {
+
   if (!balance) return null;
 
   const isPositive = balance.balance >= 0;
+
+  const income = balance.income ?? 0;
+  const expense = balance.expense ?? 0;
+  const total = balance.balance ?? 0;
 
   return (
     <View style={styles.card}>
@@ -12,14 +17,14 @@ export default function BalanceCard({ balance }) {
       <View style={styles.row}>
         <Text style={styles.income}>💵 Ingresos</Text>
         <Text style={styles.incomeValue}>
-          ${balance.totalIncome.toLocaleString()}
+          ${income.toLocaleString()}
         </Text>
       </View>
 
       <View style={styles.row}>
         <Text style={styles.expense}>💸 Egresos</Text>
         <Text style={styles.expenseValue}>
-          ${balance.totalExpense.toLocaleString()}
+          ${expense.toLocaleString()}
         </Text>
       </View>
 
@@ -31,7 +36,7 @@ export default function BalanceCard({ balance }) {
           { color: isPositive ? '#2ECC71' : '#E74C3C' },
         ]}
       >
-        {isPositive ? '📈' : '📉'} ${balance.balance.toLocaleString()}
+        {isPositive ? '📈' : '📉'} ${total.toLocaleString()}
       </Text>
     </View>
   );

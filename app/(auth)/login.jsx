@@ -72,6 +72,7 @@ export default function LoginScreen() {
       // ✅ Login OK
       if (response.ok) {
         await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('deliveryId', String(data.id));
         router.replace('/home');
       }
 
