@@ -81,6 +81,7 @@ export default function LoginScreen() {
         await login({
           token: data.token,
           deliveryId: data.id,
+          userName: data.name,
         });
         router.replace('/home');
       }

@@ -97,13 +97,15 @@ export default function HomeScreen() {
     return <Text>No se pudo cargar el balance</Text>;
   }
 
+  /* SOAT */
   const rawSoatDays = daysUntil(activeVehicle.soatExpiration);
-
-  /* Días con SOAT */
   const soatDays = rawSoatDays < 0 ? Math.abs(rawSoatDays) : rawSoatDays;
-
-  /* Días para renovar el SOAT */
   const daysRemaining = Math.max(0, 365 - soatDays);
+
+  /* TECNO */  
+  const rawTecnoDays = daysUntil(activeVehicle.tecnoMecanicaExpiration);
+  const tecnoDays = rawTecnoDays < 0 ? Math.abs(rawTecnoDays) : rawTecnoDays;
+  const tecnoRemaining = Math.max(0, 365 - tecnoDays);
 
   return (
     <>
@@ -112,6 +114,20 @@ export default function HomeScreen() {
         <View style={{ backgroundColor: '#FFF3CD', padding: 12, borderRadius: 8 }}>
           <Text>
             ⚠️ El SOAT vence en {daysRemaining} días
+          </Text>
+        </View>
+      )}
+      {tecnoRemaining <= 30 && (
+        <View
+          style={{
+            backgroundColor: '#F8D7DA',
+            padding: 12,
+            borderRadius: 8,
+            marginTop: 8,
+          }}
+        >
+          <Text>
+            ⚠️ La Tecnomecánica vence en {tecnoRemaining} días
           </Text>
         </View>
       )}

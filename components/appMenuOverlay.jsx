@@ -1,4 +1,5 @@
 import { useAuth } from '@/context/authContext';
+import { useVehicle } from '@/context/vehicleContext';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
@@ -8,7 +9,8 @@ export default function AppMenuOverlay({ visible, onClose }) {
 
   const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-  const { logout } = useAuth();
+  const { activeVehicle } = useVehicle();
+  const { user, logout } = useAuth();
   
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
@@ -78,10 +80,10 @@ export default function AppMenuOverlay({ visible, onClose }) {
           {/* HEADER */}
           <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 18, fontWeight: '700' }}>
-              Javier
+              {user?.name ?? 'Usuario'}
             </Text>
             <Text style={{ color: '#666', marginTop: 4 }}>
-              ABC123 · Yamaha MT15
+              {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
             </Text>
           </View>
 
