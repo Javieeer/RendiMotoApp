@@ -1,15 +1,17 @@
 import { useVehicle } from '@/context/vehicleContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import AppHeader from '../../../components/appHeader';
 
 export default function CreateMovementScreen() {
   const { type } = useLocalSearchParams(); // INCOME | EXPENSE
@@ -17,9 +19,10 @@ export default function CreateMovementScreen() {
   const { activeVehicle } = useVehicle();
 
   const [loading, setLoading] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [form, setForm] = useState({
-    date: new Date(),
+    date: new Date(), // 👈 Date real
     amount: '',
     description: '',
     type: type || 'INCOME',
@@ -55,7 +58,7 @@ export default function CreateMovementScreen() {
 
       const payload = {
         vehicleId: activeVehicle.id,
-        date: form.date.toISOString().split('T')[0],
+        date: form.date.toISOString().split('T')[0], // yyyy-mm-dd
         amount: Number(form.amount),
         description: form.description.trim(),
         type: form.type,
@@ -96,49 +99,77 @@ export default function CreateMovementScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
-        {form.type === 'INCOME'
-          ? 'Registrar ingreso'
-          : 'Registrar egreso'}
-      </Text>
+    <>
+      <AppHeader />
 
-      <TextInput
-        placeholder="Monto"
-        keyboardType="numeric"
-        value={form.amount}
-        onChangeText={(v) => update('amount', v)}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Descripción"
-        value={form.description}
-        onChangeText={(v) => update('description', v)}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="Odómetro (opcional)"
-        keyboardType="numeric"
-        value={form.odometer}
-        onChangeText={(v) => update('odometer', v)}
-        style={styles.input}
-      />
-
-      <TouchableOpacity
-        style={[
-          styles.button,
-          form.type === 'EXPENSE' && styles.expenseButton,
-        ]}
-        onPress={handleSave}
-        disabled={loading}
-      >
-        <Text style={styles.buttonText}>
-          {loading ? 'Guardando…' : 'Guardar'}
+      <View style={styles.container}>
+        <Text style={styles.title}>
+          {form.type === 'INCOME'
+            ? 'Registrar ingreso'
+            : 'Registrar egreso'}
         </Text>
-      </TouchableOpacity>
-    </View>
+
+        {/* 📅 FECHA */}
+        <TouchableOpacity
+          style={styles.input}
+          onPress={() => setShowDatePicker(true)}
+        >
+          <Text>
+            📅 {form.date.toLocaleDateString()}
+          </Text>
+        </TouchableOpacity>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={form.date}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+              if (selectedDate) {
+                update('date', selectedDate);
+              }
+            }}
+          />
+        )}
+
+        <TextInput
+          placeholder="Monto"
+          keyboardType="numeric"
+          value={form.amount}
+          onChangeText={(v) => update('amount', v)}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="Descripción"
+          value={form.description}
+          onChangeText={(v) => update('description', v)}
+          style={styles.input}
+        />
+
+        <TextInput
+          placeholder="Odómetro "
+          keyboardType="numeric"
+          value={form.odometer}
+          onChangeText={(v) => update('odometer', v)}
+          style={styles.input}
+        />
+
+        <TouchableOpacity
+          style={[
+            styles.button,
+            form.type === 'EXPENSE' && styles.expenseButton,
+          ]}
+          onPress={handleSave}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Guardando…' : 'Guardar'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </>
   );
 }
 

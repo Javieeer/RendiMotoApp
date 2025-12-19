@@ -1,7 +1,11 @@
-import { Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Text, TouchableOpacity, View } from 'react-native';
 import MovementItem from './movementItem';
 
 export default function MovementsList({ movements }) {
+
+  const router = useRouter();
+
   if (!movements || movements.length === 0) {
     return (
       <Text style={{ marginTop: 16, color: '#666' }}>
@@ -25,6 +29,14 @@ export default function MovementsList({ movements }) {
       {movements.slice(0, 5).map((m) => (
         <MovementItem key={m.id} movement={m} />
       ))}
+      <TouchableOpacity
+        onPress={() => router.push('/movements')}
+        style={{ marginTop: 8 }}
+      >
+        <Text style={{ color: '#FF6B00', fontWeight: '600' }}>
+          Ver todos →
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

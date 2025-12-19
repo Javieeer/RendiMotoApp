@@ -1,19 +1,34 @@
+import { useMenu } from '@/context/menuContext';
 import { useVehicle } from '@/context/vehicleContext';
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export default function AppHeader({ onMenuPress, onVehiclePress }) {
+export default function AppHeader() {
+  const { openMenu } = useMenu();
   const { activeVehicle } = useVehicle();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={onMenuPress}>
+    <View
+      style={{
+        height: insets.top + 70,
+        backgroundColor: '#fff',
+        paddingHorizontal: 16,
+        paddingTop: insets.top + 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderColor: '#EEE',
+      }}
+    >
+      <TouchableOpacity onPress={openMenu}>
         <Ionicons name="menu" size={26} color="#333" />
       </TouchableOpacity>
 
       <View style={styles.center}>
         <Text style={styles.greeting}>Hola de nuevo</Text>
-
         {activeVehicle && (
           <Text style={styles.vehicle}>
             {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
@@ -21,7 +36,7 @@ export default function AppHeader({ onMenuPress, onVehiclePress }) {
         )}
       </View>
 
-      <TouchableOpacity onPress={onVehiclePress}>
+      <TouchableOpacity>
         <Ionicons name="bicycle-outline" size={26} color="#333" />
       </TouchableOpacity>
     </View>
@@ -29,25 +44,8 @@ export default function AppHeader({ onMenuPress, onVehiclePress }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 70,
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderColor: '#EEE',
-  },
-  center: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  greeting: {
-    fontSize: 14,
-    color: '#666',
-  },
+  center: { alignItems: 'center', flex: 1 },
+  greeting: { fontSize: 14, color: '#666' },
   vehicle: {
     fontSize: 15,
     fontWeight: '600',

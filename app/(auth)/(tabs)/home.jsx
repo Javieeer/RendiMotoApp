@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 export default function HomeScreen() {
+
   const router = useRouter();
   const { activeVehicle } = useVehicle();
 
@@ -15,14 +16,10 @@ export default function HomeScreen() {
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const handleMenu = () => {
-    console.log('Abrir menú');
-  };
-
-  const handleVehicleChange = () => {
+  /* const handleVehicleChange = () => {
     console.log('Cambiar vehículo');
     // luego: router.push('/select-vehicle')
-  };
+  }; */
 
   useEffect(() => {
     if (!activeVehicle) return;
@@ -101,10 +98,7 @@ export default function HomeScreen() {
 
   return (
     <>
-      <AppHeader
-        onMenuPress={handleMenu}
-        onVehiclePress={handleVehicleChange}
-      />
+      <AppHeader />
       <View style={{ padding: 16 }}>
         <View style={{ marginTop: 20 }}>
           <BalanceCard balance={balance} />
