@@ -1,18 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useVehicle } from './vehicleContext'; // 👈 CORRECTO
+import { useVehicle } from './vehicleContext';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+
   const router = useRouter();
-  const { resetVehicles } = useVehicle(); // 👈 USAR EL HOOK
+  const { resetVehicles } = useVehicle();
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  /* Check authentication status on app start */
   useEffect(() => {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem('token');
@@ -27,7 +29,7 @@ export function AuthProvider({ children }) {
         });
       } else {
         setIsAuthenticated(false);
-        router.replace('/login');
+        router.replace('/');
       }
 
       setLoading(false);
@@ -36,6 +38,7 @@ export function AuthProvider({ children }) {
     checkAuth();
   }, []);
 
+  /* Login user and store credentials */
   const login = async ({ token, deliveryId, userName }) => {
     await AsyncStorage.setItem('token', token);
     await AsyncStorage.setItem('deliveryId', String(deliveryId));
@@ -50,6 +53,7 @@ export function AuthProvider({ children }) {
     router.replace('/home');
   };
 
+  /* Logout user and clear all stored data */
   const logout = async () => {
     await AsyncStorage.clear();
 

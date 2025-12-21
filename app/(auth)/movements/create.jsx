@@ -1,3 +1,4 @@
+import AppHeader from '@/components/appHeader';
 import { useVehicle } from '@/context/vehicleContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -11,24 +12,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AppHeader from '../../../components/appHeader';
 
 export default function CreateMovementScreen() {
+
   const { type } = useLocalSearchParams(); // INCOME | EXPENSE
   const router = useRouter();
   const { activeVehicle } = useVehicle();
 
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
   const [form, setForm] = useState({
-    date: new Date(), // 👈 Date real
+    date: new Date(), 
     amount: '',
     description: '',
     type: type || 'INCOME',
     odometer: '',
   });
 
+  /* Validar vehículo activo */
   useEffect(() => {
     if (!activeVehicle) {
       Alert.alert('Error', 'No hay vehículo activo');
@@ -36,10 +37,12 @@ export default function CreateMovementScreen() {
     }
   }, []);
 
+  /* Actualizar formulario */
   const update = (key, value) => {
     setForm({ ...form, [key]: value });
   };
 
+  /* Guardar movimiento */
   const handleSave = async () => {
     if (!form.amount || Number(form.amount) <= 0) {
       Alert.alert('Monto inválido', 'Ingresa un monto válido');

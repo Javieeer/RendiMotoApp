@@ -11,6 +11,7 @@ export function VehicleProvider({ children }) {
   const [vehicles, setVehicles] = useState([]);
   const [activeVehicle, setActiveVehicle] = useState(null);
 
+  /* Load vehicles and set active vehicle */
   const loadVehicles = async (deliveryId, token) => {
     const res = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/vehicles/delivery/${deliveryId}`,
@@ -40,16 +41,15 @@ export function VehicleProvider({ children }) {
 
     setVehiclesLoaded(true);
     setVehicles(list);
-
-    /* setActiveVehicle(list[0]);
-    await AsyncStorage.setItem(VEHICLE_KEY, String(list[0].id)); */
   };
 
+  /* Select a vehicle and save it to AsyncStorage */
   const selectVehicle = async (vehicle) => {
     setActiveVehicle(vehicle);
     await AsyncStorage.setItem(VEHICLE_KEY, String(vehicle.id));
   };
 
+  /* Reset vehicles and active vehicle */
   const resetVehicles = () => {
     setVehicles([]);
     setActiveVehicle(null);

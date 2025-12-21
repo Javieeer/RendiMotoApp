@@ -9,6 +9,7 @@ export default function CreateVehicleScreen() {
   const { vehicles, vehiclesLoaded } = useVehicle();
   const { logout } = useAuth();
 
+  /* Volver a la pantalla principal */
   const handleBackHome = () => {
     if (!vehiclesLoaded) return;
 

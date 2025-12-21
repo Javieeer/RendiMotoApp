@@ -6,6 +6,7 @@ export default function MovementsList({ movements }) {
 
   const router = useRouter();
 
+  /* Render a message if no movements exist */
   if (!movements || movements.length === 0) {
     return (
       <Text style={{ marginTop: 16, color: '#666' }}>

@@ -2,6 +2,7 @@ import BackButton from '@/components/backButton';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function Header({ title }: { title: string }) {
+
   return (
     <View style={styles.container}>
       <BackButton label="Atras" />
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F3F3EE',
     zIndex: 10,
-    gap: 16, // separa botón y título
+    gap: 16,
   },
   title: {
     fontSize: 26,

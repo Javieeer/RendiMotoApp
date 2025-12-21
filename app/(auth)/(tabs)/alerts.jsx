@@ -3,7 +3,9 @@ import { useVehicle } from '@/context/vehicleContext';
 import { daysUntil } from '@/utils/alerts';
 import { Text, View } from 'react-native';
 
+/* Componente de alerta */
 function AlertCard({ title, days, type }) {
+
   const isExpired = days < 0;
   const absDays = Math.abs(days);
 
@@ -36,8 +38,10 @@ function AlertCard({ title, days, type }) {
 }
 
 export default function AlertsScreen() {
+
   const { activeVehicle } = useVehicle();
 
+  /* Verificar si hay vehículo activo */
   if (!activeVehicle) {
     return (
       <>

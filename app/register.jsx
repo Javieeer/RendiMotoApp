@@ -9,7 +9,6 @@ export default function Register() {
 
   const router = useRouter();
 
-  /* Declaramos el estado para manejar el formulario  */
   const [form, setForm] = useState({
     documentType: 1,
     documentNumber: '',
@@ -19,7 +18,6 @@ export default function Register() {
     password: '',
     city: '',
   });
-
   const [locationError, setLocationError] = useState(false);
 
   /* Obtenemos la ciudad del dispositivo */
@@ -89,7 +87,7 @@ export default function Register() {
       lastName,
       phoneNumber: form.phoneNumber.trim().toUpperCase(),
       email: form.email.trim().toLowerCase(),
-      password: form.password, // ❗ no tocar
+      password: form.password, 
       city: form.city.trim().toUpperCase(),
     };
 
@@ -111,14 +109,14 @@ export default function Register() {
         // backend no devolvió JSON
       }
 
+      /* Algo sale mal */
       if (!response.ok) {
-        // 🟡 Conflictos comunes
+        
         if (response.status === 409) {
           alert(data?.message || 'El usuario ya existe');
           return;
         }
 
-        // 🟡 Validaciones
         if (response.status === 400) {
           alert(data?.message || 'Datos inválidos');
           return;
@@ -128,7 +126,7 @@ export default function Register() {
         return;
       }
 
-      // ✅ Registro OK
+      /* Registro exitoso */
       if (response.ok) {
         Alert.alert(
           'Registro exitoso 🎉',

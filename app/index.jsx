@@ -4,6 +4,7 @@ import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'reac
 export default function Home() {
 
   const logo = require('../assets/images/rendimoto-logo.png');
+  
   return (
     <View style={styles.container}>
 

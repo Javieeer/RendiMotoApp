@@ -10,6 +10,7 @@ export default function MovementDetailScreen() {
 
   const parsed = JSON.parse(movement);
 
+  /* Eliminar movimiento */
   const handleDelete = async () => {
     Alert.alert(
       'Eliminar movimiento',

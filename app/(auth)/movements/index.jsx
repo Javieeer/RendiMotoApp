@@ -15,6 +15,7 @@ export default function MovementsScreen() {
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  /* Cargar movimientos */
   useEffect(() => {
     if (!activeVehicle) return;
 
@@ -48,10 +49,10 @@ export default function MovementsScreen() {
     loadMovements();
   }, [activeVehicle]);
 
+  /* Ordenar movimientos por fecha */
   if (loading) {
     return <ActivityIndicator style={{ marginTop: 40 }} />;
   }
-
   movements.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (

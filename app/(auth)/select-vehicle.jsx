@@ -7,6 +7,7 @@ export default function SelectVehicleScreen() {
   const { vehicles, selectVehicle } = useVehicle();
   const router = useRouter();
 
+  /* Función para seleccionar un vehículo */
   const handleSelectVehicle = async (vehicle) => {
     await selectVehicle(vehicle);
     router.replace('/home');

@@ -14,19 +14,12 @@ import {
 } from 'react-native';
 
 export default function MovementEditScreen() {
+
   const router = useRouter();
   const { movement } = useLocalSearchParams();
 
-  const parsedMovement = JSON.parse(movement);
-  const movementObj =
-    typeof parsedMovement === 'string'
-      ? JSON.parse(parsedMovement)
-      : parsedMovement;
-
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
-  // 🔑 FECHA SE MANTIENE COMO STRING
   const [form, setForm] = useState({
     date: movementObj.date, // yyyy-mm-dd
     amount: String(movementObj.amount),
@@ -37,9 +30,16 @@ export default function MovementEditScreen() {
       : '',
   });
 
-  // 🔑 Convertimos SOLO para el picker
+  const parsedMovement = JSON.parse(movement);
+  const movementObj =
+    typeof parsedMovement === 'string'
+      ? JSON.parse(parsedMovement)
+      : parsedMovement;
+
+  /* Convertimos SOLO para el picker */
   const dateToPicker = new Date(form.date + 'T12:00:00');
 
+  /* Guardar cambios */
   const handleSave = async () => {
     if (!form.amount || Number(form.amount) <= 0) {
       Alert.alert('Monto inválido');

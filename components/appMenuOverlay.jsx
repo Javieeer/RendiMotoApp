@@ -8,12 +8,12 @@ import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View 
 export default function AppMenuOverlay({ visible, onClose }) {
 
   const SCREEN_HEIGHT = Dimensions.get('window').height;
+  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
   const { activeVehicle } = useVehicle();
   const { user, logout } = useAuth();
-  
-  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
+  /* Animate the menu */
   useEffect(() => {
     Animated.timing(slideAnim, {
       toValue: visible ? 0 : SCREEN_HEIGHT,
@@ -23,6 +23,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
     }).start();
   }, [visible]);
 
+  /* Menu item component */
   const MenuItem = ({ icon, label, onPress, danger }) => (
     <TouchableOpacity
       onPress={onPress}

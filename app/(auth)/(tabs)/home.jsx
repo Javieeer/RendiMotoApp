@@ -18,6 +18,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [switchingVehicle, setSwitchingVehicle] = useState(false);
 
+  /* Cargar vehículos */
   useEffect(() => {
     const init = async () => {
       const token = await AsyncStorage.getItem('token');
@@ -31,6 +32,7 @@ export default function HomeScreen() {
     init();
   }, []);
 
+  /* Redirigir si no hay vehículo activo */
   useEffect(() => {
     if (!vehiclesLoaded) return;
 
@@ -39,6 +41,7 @@ export default function HomeScreen() {
     }
   }, [vehiclesLoaded, activeVehicle]);
 
+  /* Cargar movimientos y balance */
   useEffect(() => {
     if (!vehiclesLoaded || !activeVehicle) return;
 
@@ -115,6 +118,7 @@ export default function HomeScreen() {
     );
   }
 
+  /* No hay vehículo activo */
   if (!activeVehicle) {
     return (
       <>
@@ -131,12 +135,12 @@ export default function HomeScreen() {
     );
   }
 
-  /* SOAT */
+  /* ALERTA SOAT */
   const rawSoatDays = daysUntil(activeVehicle.soatExpiration);
   const soatDays = rawSoatDays < 0 ? Math.abs(rawSoatDays) : rawSoatDays;
   const daysRemaining = Math.max(0, 365 - soatDays);
 
-  /* TECNO */  
+  /* ALERTA TECNO */  
   const rawTecnoDays = daysUntil(activeVehicle.tecnoMecanicaExpiration);
   const tecnoDays = rawTecnoDays < 0 ? Math.abs(rawTecnoDays) : rawTecnoDays;
   const tecnoRemaining = Math.max(0, 365 - tecnoDays);

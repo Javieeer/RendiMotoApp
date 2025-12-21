@@ -14,15 +14,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
   
-  const { login } = useAuth();
-
-  /* VARIABLES DE ENTORNO */
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-  /* Manejo de navegación */
   const router = useRouter();
+  const { login } = useAuth();
 
-  /* Declaramos estados necesarios para el manejo de la información */
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -55,16 +51,32 @@ export default function LoginScreen() {
 
       let data = null;
 
-      try {
-        data = await response.json();
-      } catch {
-        alert('Respuesta inválida del servidor');
-        return;
-      }
+      data = await response.json();
 
+      /* Algo sale mal */
       if (!response.ok) {
         if (response.status === 401) {
           alert('Correo o contraseña incorrectos');
+          return;
+        }
+
+        if (response.status === 400) {
+          alert('Faltan datos en el formulario');
+          return;
+        }
+
+        if (response.status >= 500) {
+          alert('Error del servidor, inténtalo más tarde');
+          return;
+        }
+
+        if (response.status === 429) {
+          alert('Demasiados intentos, espera un momento');
+          return;
+        }
+
+        if (data?.message) {
+          alert(data.message);
           return;
         }
 
@@ -72,7 +84,7 @@ export default function LoginScreen() {
         return;
       }
 
-      // ✅ Login OK
+      /* Éxito */
       if (response.ok) {
         /* Borrar en un futuro */
         await AsyncStorage.setItem('token', data.token);
@@ -87,16 +99,20 @@ export default function LoginScreen() {
       }
 
     } catch (err) {
+      if (err instanceof SyntaxError) {
+        alert('Datos incorrectos, revise e intente nuevamente');
+        return;
+      }
+
       alert('No se pudo conectar con el servidor');
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header fijo */}
+      
       <Header title="Iniciar sesión" />
 
-      {/* Contenido scrollable */}
       <ScrollView contentContainerStyle={styles.form}>
         <Text style={styles.subTitle}>
           Accede a tu cuenta de RendiMoto
@@ -140,7 +156,7 @@ const styles = StyleSheet.create({
   },
   form: {
     padding: 24,
-    paddingTop: 16, // espacio debajo del header
+    paddingTop: 16, 
     alignItems: 'center',
   },
   subTitle: {
