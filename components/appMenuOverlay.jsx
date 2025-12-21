@@ -120,7 +120,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             label="Reportes"
             onPress={() => {
               onClose();
-              // futuro
+              router.push('/reports');
             }}
           />
 
