@@ -4,8 +4,6 @@ export default function BalanceCard({ balance }) {
 
   if (!balance) return null;
 
-  console.log("Income:", balance.income, "Expense:", balance.expense, "Total:", balance.balance);
-
   const isPositive = balance.balance >= 0;
   const income = balance.totalIncome ?? 0;
   const expense = balance.totalExpense ?? 0;

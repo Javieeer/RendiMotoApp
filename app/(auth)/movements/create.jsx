@@ -1,5 +1,6 @@
 import AppHeader from '@/components/appHeader';
 import { useVehicle } from '@/context/vehicleContext';
+import { getLastOdometer } from '@/utils/odomer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -28,6 +29,7 @@ export default function CreateMovementScreen() {
     type: type || 'INCOME',
     odometer: '',
   });
+  const [movements, setMovements] = useState([]);
 
   /* Validar vehículo activo */
   useEffect(() => {
@@ -35,6 +37,29 @@ export default function CreateMovementScreen() {
       Alert.alert('Error', 'No hay vehículo activo');
       router.replace('/home');
     }
+
+    /* Obtener movimientos */
+    const fetchMovements = async () => {
+      try {
+        const currentVehicleId = activeVehicle.id;
+        const token = await AsyncStorage.getItem('token'); 
+        if (!token) return;
+        const res = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${currentVehicleId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        if (res.ok) {
+          data.sort((a, b) => new Date(b.date) - new Date(a.date));
+          setMovements(data);
+        } else {
+          Alert.alert('Error', data.message || 'No se pudieron cargar los movimientos');
+        }
+      } catch (e) {
+        Alert.alert('Error', 'No se pudo conectar con el servidor');
+      }
+    };
+    fetchMovements();
   }, []);
 
   /* Actualizar formulario */
@@ -52,6 +77,20 @@ export default function CreateMovementScreen() {
     if (!form.description.trim()) {
       Alert.alert('Descripción requerida', 'Describe el movimiento');
       return;
+    }
+    
+    const lastOdometer = getLastOdometer(movements);
+
+    if (form.odometer) {
+      const current = Number(form.odometer);
+
+      if (current < lastOdometer) {
+        Alert.alert(
+          'Odómetro inválido',
+          `Debe ser mayor o igual a ${lastOdometer}`
+        );
+        return;
+      }
     }
 
     setLoading(true);

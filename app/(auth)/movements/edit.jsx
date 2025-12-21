@@ -1,8 +1,10 @@
 import AppHeader from '@/components/appHeader';
+import { useVehicle } from '@/context/vehicleContext';
+import { getLastOdometer } from '@/utils/odomer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Platform,
@@ -17,6 +19,13 @@ export default function MovementEditScreen() {
 
   const router = useRouter();
   const { movement } = useLocalSearchParams();
+  const { activeVehicle } = useVehicle();
+
+  const parsedMovement = JSON.parse(movement);
+  const movementObj =
+    typeof parsedMovement === 'string'
+      ? JSON.parse(parsedMovement)
+      : parsedMovement;
 
   const [loading, setLoading] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -29,12 +38,33 @@ export default function MovementEditScreen() {
       ? String(movementObj.odometer)
       : '',
   });
+  const [movements, setMovements] = useState([]);
 
-  const parsedMovement = JSON.parse(movement);
-  const movementObj =
-    typeof parsedMovement === 'string'
-      ? JSON.parse(parsedMovement)
-      : parsedMovement;
+  /* Obtener movimientos */
+  useEffect(() => {
+    if (!activeVehicle) return;
+
+    const fetchMovements = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+
+        const res = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${activeVehicle.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const data = await res.json();
+        if (res.ok) {
+          setMovements(data);
+        }
+      } catch (e) {
+        Alert.alert('Error', 'No se pudieron cargar los movimientos');
+      }
+    };
+
+    fetchMovements();
+  }, []);
 
   /* Convertimos SOLO para el picker */
   const dateToPicker = new Date(form.date + 'T12:00:00');
@@ -44,6 +74,35 @@ export default function MovementEditScreen() {
     if (!form.amount || Number(form.amount) <= 0) {
       Alert.alert('Monto inválido');
       return;
+    }
+
+    if (form.odometer) {
+      const currentOdometer = Number(form.odometer);
+
+      if (isNaN(currentOdometer)) {
+        Alert.alert('Odómetro inválido');
+        return;
+      }
+      const lastOdometer = getLastOdometer(
+        movements.filter(m => m.id !== movementObj.id)
+      );
+
+      if (form.odometer && lastOdometer !== null) {
+        const current = Number(form.odometer);
+
+        if (isNaN(current)) {
+          Alert.alert('Odómetro inválido');
+          return;
+        }
+
+        if (current < lastOdometer) {
+          Alert.alert(
+            'Odómetro inválido',
+            `El odómetro no puede ser menor a ${lastOdometer}`
+          );
+          return;
+        }
+      }
     }
 
     setLoading(true);
@@ -65,7 +124,7 @@ export default function MovementEditScreen() {
             odometer: form.odometer
               ? Number(form.odometer)
               : null,
-            date: form.date, // 👈 sigue siendo string
+            date: form.date,
           }),
         }
       );

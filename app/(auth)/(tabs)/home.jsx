@@ -4,8 +4,8 @@ import MovementsList from '@/components/movementsList';
 import { useVehicle } from '@/context/vehicleContext';
 import { daysUntil } from '@/utils/alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 export default function HomeScreen() {
@@ -17,6 +17,53 @@ export default function HomeScreen() {
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [switchingVehicle, setSwitchingVehicle] = useState(false);
+
+  let isMounted = true;
+
+  const loadData = async () => {
+    const currentVehicleId = activeVehicle.id;
+
+    try {
+      setSwitchingVehicle(true);
+      const token = await AsyncStorage.getItem('token');
+      if (!token) return;
+
+      const [movementsRes, balanceRes] = await Promise.all([
+        fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${currentVehicleId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${currentVehicleId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+      ]);
+
+      if (!movementsRes.ok || !balanceRes.ok) {
+        console.warn('Fetch failed', {
+          movements: movementsRes.status,
+          balance: balanceRes.status,
+        });
+        return;
+      }
+
+      const movementsJson = await movementsRes.json();
+      movementsJson.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const balanceJson = await balanceRes.json();
+
+      if (!isMounted || activeVehicle.id !== currentVehicleId) return;
+
+      setMovements(movementsJson);
+      setBalance(balanceJson);
+    } catch (e) {
+      console.error('Error fetching data:', e);
+    } finally {
+      if (isMounted) {
+        setLoading(false);
+        setSwitchingVehicle(false);
+      }
+    }
+  };
 
   /* Cargar vehículos */
   useEffect(() => {
@@ -45,55 +92,9 @@ export default function HomeScreen() {
   useEffect(() => {
     if (!vehiclesLoaded || !activeVehicle) return;
 
-    let isMounted = true;
-
     setLoading(true);
     setBalance(null);
     setMovements([]);
-
-    const loadData = async () => {
-      const currentVehicleId = activeVehicle.id;
-
-      try {
-        setSwitchingVehicle(true);
-        const token = await AsyncStorage.getItem('token');
-        if (!token) return;
-
-        const [movementsRes, balanceRes] = await Promise.all([
-          fetch(
-            `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${currentVehicleId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
-          fetch(
-            `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${currentVehicleId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-          ),
-        ]);
-
-        if (!movementsRes.ok || !balanceRes.ok) {
-          console.warn('Fetch failed', {
-            movements: movementsRes.status,
-            balance: balanceRes.status,
-          });
-          return;
-        }
-
-        const movementsJson = await movementsRes.json();
-        const balanceJson = await balanceRes.json();
-
-        if (!isMounted || activeVehicle.id !== currentVehicleId) return;
-
-        setMovements(movementsJson);
-        setBalance(balanceJson);
-      } catch (e) {
-        console.error('Error fetching data:', e);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-          setSwitchingVehicle(false);
-        }
-      }
-    };
 
     loadData();
 
@@ -101,6 +102,15 @@ export default function HomeScreen() {
       isMounted = false;
     };
   }, [vehiclesLoaded, activeVehicle]);
+
+  /* Recargar datos al enfocar la pantalla */
+  useFocusEffect(
+    useCallback(() => {
+      if (!vehiclesLoaded || !activeVehicle) return;
+
+      loadData();
+    }, [vehiclesLoaded, activeVehicle])
+  );
 
   /* Centrar el cargando en la pantalla */
   if (loading || !vehiclesLoaded) {
