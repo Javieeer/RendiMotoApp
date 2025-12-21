@@ -82,9 +82,15 @@ export default function AppMenuOverlay({ visible, onClose }) {
             <Text style={{ fontSize: 18, fontWeight: '700' }}>
               {user?.name ?? 'Usuario'}
             </Text>
-            <Text style={{ color: '#666', marginTop: 4 }}>
-              {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
-            </Text>
+            {activeVehicle ? (
+              <Text style={styles.vehicle}>
+                {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
+              </Text>
+            ) : (
+              <Text style={styles.vehiclePlaceholder}>
+                Sin vehículo activo
+              </Text>
+            )}
           </View>
 
           <View style={{ height: 1, backgroundColor: '#EEE', marginVertical: 12 }} />
@@ -166,4 +172,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
+  vehiclePlaceholder: {
+    fontSize: 14,
+    color: '#999',
+    fontStyle: 'italic',
+  }
 });

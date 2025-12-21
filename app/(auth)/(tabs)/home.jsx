@@ -11,7 +11,7 @@ import { Text, View } from 'react-native';
 export default function HomeScreen() {
 
   const router = useRouter();
-  const { activeVehicle, loadVehicles } = useVehicle();
+  const { activeVehicle, loadVehicles, vehiclesLoaded } = useVehicle();
 
   const [movements, setMovements] = useState([]);
   const [balance, setBalance] = useState(null);
@@ -32,46 +32,63 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (!activeVehicle) return;
+    if (!vehiclesLoaded) return;
+
+    if (vehiclesLoaded && !activeVehicle) {
+      router.replace('/vehicles/create');
+    }
+  }, [vehiclesLoaded, activeVehicle]);
+
+  useEffect(() => {
+    if (!vehiclesLoaded || !activeVehicle) return;
 
     let isMounted = true;
 
-    setBalance(null); 
+    setLoading(true);
+    setBalance(null);
     setMovements([]);
 
     const loadData = async () => {
-      try {
-        setSwitchingVehicle(true); 
-        const token = await AsyncStorage.getItem('token');
+      const currentVehicleId = activeVehicle.id;
 
-        const movementsRes = await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${activeVehicle.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+      try {
+        setSwitchingVehicle(true);
+        const token = await AsyncStorage.getItem('token');
+        if (!token) return;
+
+        const [movementsRes, balanceRes] = await Promise.all([
+          fetch(
+            `${process.env.EXPO_PUBLIC_API_URL}/movements/vehicle/${currentVehicleId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+          fetch(
+            `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${currentVehicleId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          ),
+        ]);
+
+        if (!movementsRes.ok || !balanceRes.ok) {
+          console.warn('Fetch failed', {
+            movements: movementsRes.status,
+            balance: balanceRes.status,
+          });
+          return;
+        }
 
         const movementsJson = await movementsRes.json();
-
-        const balanceRes = await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${activeVehicle.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        
         const balanceJson = await balanceRes.json();
 
-        if (!movementsRes.ok || !balanceRes.ok) throw new Error();
+        if (!isMounted || activeVehicle.id !== currentVehicleId) return;
 
-        if (isMounted) {
-          setMovements(movementsJson);
-          setBalance(balanceJson);
-        }
+        setMovements(movementsJson);
+        setBalance(balanceJson);
       } catch (e) {
-        console.error(e);
+        console.error('Error fetching data:', e);
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setSwitchingVehicle(false);
+        }
       }
     };
 
@@ -80,21 +97,38 @@ export default function HomeScreen() {
     return () => {
       isMounted = false;
     };
-  }, [activeVehicle]);
+  }, [vehiclesLoaded, activeVehicle]);
 
   /* Centrar el cargando en la pantalla */
-  if (loading) return <Text
-      style={{
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginTop: '50%',
-      }}
-    >
-      Cargando...
-    </Text>;
-  if (!balance && !switchingVehicle) {
-    return <Text>No se pudo cargar el balance</Text>;
+  if (loading || !vehiclesLoaded) {
+    return (
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: 'bold',
+          textAlign: 'center',
+          marginTop: '50%',
+        }}
+      >
+        Cargando...
+      </Text>
+    );
+  }
+
+  if (!activeVehicle) {
+    return (
+      <>
+        <AppHeader />
+        <View style={{ flex: 1, padding: 16, justifyContent: 'center' }}>
+          <Text style={{ fontSize: 16, textAlign: 'center' }}>
+            🚗 No tienes un vehículo registrado
+          </Text>
+          <Text style={{ marginTop: 8, textAlign: 'center', color: '#666' }}>
+            Agrega un vehículo para ver tu balance y alertas
+          </Text>
+        </View>
+      </>
+    );
   }
 
   /* SOAT */

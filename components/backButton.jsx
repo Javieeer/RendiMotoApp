@@ -7,7 +7,7 @@ type Props = {
 
 export default function BackButton({ label = 'Volver' }: Props) {
   return (
-    <TouchableOpacity style={styles.container} onPress={() => router.back()}>
+    <TouchableOpacity style={styles.container} onPress={() => router.push('/')}>
       <Text style={styles.text}>← {label}</Text>
     </TouchableOpacity>
   );

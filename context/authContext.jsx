@@ -1,37 +1,37 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useVehicle } from './vehicleContext'; // 👈 CORRECTO
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const router = useRouter();
+  const { resetVehicles } = useVehicle(); // 👈 USAR EL HOOK
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  console.log("AuthContext - isAuthenticated:", isAuthenticated);
-
   useEffect(() => {
     const checkAuth = async () => {
-    const token = await AsyncStorage.getItem('token');
-    const deliveryId = await AsyncStorage.getItem('deliveryId');
-    const userName = await AsyncStorage.getItem('userName');
+      const token = await AsyncStorage.getItem('token');
+      const deliveryId = await AsyncStorage.getItem('deliveryId');
+      const userName = await AsyncStorage.getItem('userName');
 
-    if (token && deliveryId && userName) {
-      setIsAuthenticated(true);
-      setUser({
-        id: Number(deliveryId),
-        name: userName,
-      });
-    } else {
-      setIsAuthenticated(false);
-      router.replace('/login');
-    }
+      if (token && deliveryId && userName) {
+        setIsAuthenticated(true);
+        setUser({
+          id: Number(deliveryId),
+          name: userName,
+        });
+      } else {
+        setIsAuthenticated(false);
+        router.replace('/login');
+      }
 
-    setLoading(false);
-  };
+      setLoading(false);
+    };
 
     checkAuth();
   }, []);
@@ -50,17 +50,13 @@ export function AuthProvider({ children }) {
     router.replace('/home');
   };
 
-
   const logout = async () => {
-    await AsyncStorage.multiRemove([
-      'token',
-      'deliveryId',
-      'userName',
-      'activeVehicleId',
-    ]);
+    await AsyncStorage.clear();
 
+    resetVehicles();
     setUser(null);
     setIsAuthenticated(false);
+    AsyncStorage.clear();
     router.replace('/login');
   };
 

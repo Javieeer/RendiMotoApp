@@ -6,6 +6,8 @@ const VehicleContext = createContext(null);
 const VEHICLE_KEY = 'activeVehicleId';
 
 export function VehicleProvider({ children }) {
+
+  const [vehiclesLoaded, setVehiclesLoaded] = useState(false);
   const [vehicles, setVehicles] = useState([]);
   const [activeVehicle, setActiveVehicle] = useState(null);
 
@@ -20,29 +22,38 @@ export function VehicleProvider({ children }) {
     const data = await res.json();
     const list = data.body || [];
 
-    setVehicles(list);
-
-    if (list.length === 0) {
+    if(!data.body || data.body.length === 0) {
+      setVehiclesLoaded(true);
       setActiveVehicle(null);
       return;
     }
 
     const savedId = await AsyncStorage.getItem(VEHICLE_KEY);
-    if (savedId) {
-      const found = list.find(v => v.id === Number(savedId));
-      if (found) {
-        setActiveVehicle(found);
-        return;
-      }
+    const found =  data.body.find(v => v.id === Number(savedId));
+    
+    if (found) {
+      setActiveVehicle(found);
+    } else {
+      setActiveVehicle(data.body[0]);
+      await AsyncStorage.setItem(VEHICLE_KEY, String(data.body[0].id));
     }
 
-    setActiveVehicle(list[0]);
-    await AsyncStorage.setItem(VEHICLE_KEY, String(list[0].id));
+    setVehiclesLoaded(true);
+    setVehicles(list);
+
+    /* setActiveVehicle(list[0]);
+    await AsyncStorage.setItem(VEHICLE_KEY, String(list[0].id)); */
   };
 
   const selectVehicle = async (vehicle) => {
     setActiveVehicle(vehicle);
     await AsyncStorage.setItem(VEHICLE_KEY, String(vehicle.id));
+  };
+
+  const resetVehicles = () => {
+    setVehicles([]);
+    setActiveVehicle(null);
+    setVehiclesLoaded(false);
   };
 
   return (
@@ -52,6 +63,8 @@ export function VehicleProvider({ children }) {
         activeVehicle,
         loadVehicles,
         selectVehicle,
+        vehiclesLoaded,
+        resetVehicles,
       }}
     >
       {children}

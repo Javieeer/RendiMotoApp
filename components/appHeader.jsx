@@ -33,9 +33,13 @@ export default function AppHeader() {
 
       <View style={styles.center}>
         <Text style={styles.greeting}>Hola de nuevo</Text>
-        {activeVehicle && (
+        {activeVehicle ? (
           <Text style={styles.vehicle}>
             {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
+          </Text>
+        ) : (
+          <Text style={styles.vehiclePlaceholder}>
+            Sin vehículo activo
           </Text>
         )}
       </View>

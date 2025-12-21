@@ -6,6 +6,7 @@ import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function RootContent() {
+  
   const { menuOpen, closeMenu } = useMenu();
 
   return (
@@ -20,13 +21,13 @@ export default function Layout() {
   return (
     <>
       <SafeAreaProvider>
-        <AuthProvider>
-          <MenuProvider>
-            <VehicleProvider>
+        <VehicleProvider>
+          <AuthProvider>
+            <MenuProvider>
               <RootContent />
-            </VehicleProvider>
-          </MenuProvider>
-        </AuthProvider>
+            </MenuProvider>
+          </AuthProvider>
+        </VehicleProvider>
       </SafeAreaProvider>
     </>
   );
