@@ -2,26 +2,28 @@ import AppHeader from '@/components/appHeader';
 import BalanceCard from '@/components/balanceCard';
 import { useVehicle } from '@/context/vehicleContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
 import {
     Alert,
+    Modal,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
 
-/* FORMATEO DE FECHAS */
+/* Utils */
 const formatDate = (date) => date.toISOString().split('T')[0];
 
-/* MENSUAL */
 const getMonthRange = () => {
   const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1);
-  return { start, end: now };
+  return {
+    start: new Date(now.getFullYear(), now.getMonth(), 1),
+    end: now,
+  };
 };
 
-/* SEMANAL */
 const getWeekRange = () => {
   const now = new Date();
   const day = now.getDay();
@@ -31,44 +33,59 @@ const getWeekRange = () => {
   return { start, end: now };
 };
 
-/* DIARIO */
 const getDayRange = () => {
   const now = new Date();
   return { start: now, end: now };
 };
 
-/* Botón reutilizable */
-function ReportButton({ label, onPress, active }) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.button,
-        active && styles.buttonActive,
-      ]}
-    >
-      <Text
-        style={[
-          styles.buttonText,
-          active && styles.buttonTextActive,
-        ]}
-      >
-        {label}
-      </Text>
-    </TouchableOpacity>
-  );
-}
+const formatHumanDate = (date) =>
+  date.toLocaleDateString('es-CO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+
+const getSubtitleByRange = (type, range) => {
+  switch (type) {
+    case 'MONTH':
+      return `Reporte mensual · ${range.start.toLocaleDateString('es-CO', {
+        month: 'long',
+        year: 'numeric',
+      })}`;
+
+    case 'WEEK':
+      return `Reporte semanal · ${formatHumanDate(range.start)} – ${formatHumanDate(range.end)}`;
+
+    case 'DAY':
+      return `Reporte diario · ${formatHumanDate(range.start)}`;
+
+    case 'ALL':
+      return 'Histórico · todos los movimientos';
+
+    case 'CUSTOM':
+      return `Personalizado · ${formatHumanDate(range.start)} – ${formatHumanDate(range.end)}`;
+
+    default:
+      return '';
+  }
+};
 
 export default function ReportsScreen() {
-    
   const { activeVehicle } = useVehicle();
 
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(null);
-  const [rangeType, setRangeType] = useState('MONTH'); // DAY | WEEK | MONTH | ALL
+  const [rangeType, setRangeType] = useState('MONTH');
 
-  /* Cargar balance */
-  const fetchBalance = async (type) => {
+  /* Personalizado */
+  const [showCustom, setShowCustom] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+  const [subtitle, setSubtitle] = useState('');
+
+  const fetchBalance = async (type, customRange = null) => {
     if (!activeVehicle) return;
 
     setLoading(true);
@@ -79,41 +96,40 @@ export default function ReportsScreen() {
 
       let url = `${process.env.EXPO_PUBLIC_API_URL}/balance/vehicle/${activeVehicle.id}`;
 
-      /* Editar URL del fetch según rango */
-      if (type !== 'ALL') {
-        let range;
+      let range = null;
 
-        if (type === 'MONTH') range = getMonthRange();
-        if (type === 'WEEK') range = getWeekRange();
-        if (type === 'DAY') range = getDayRange();
+      if (type !== 'ALL') {
+        range = customRange;
+
+        if (!range) {
+          if (type === 'MONTH') range = getMonthRange();
+          if (type === 'WEEK') range = getWeekRange();
+          if (type === 'DAY') range = getDayRange();
+        }
 
         url += `/range?startDate=${formatDate(range.start)}&endDate=${formatDate(range.end)}`;
       }
 
       const res = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
 
-      /* En caso de error */
       if (!res.ok) {
         Alert.alert('Error', data.message || 'No se pudo obtener el balance');
         return;
       }
 
-      /* Si todo sale bien */
+      setSubtitle(getSubtitleByRange(type, range));
       setBalance(data);
-
-    } catch (e) {
+    } catch {
       Alert.alert('Error', 'No se pudo conectar con el servidor');
     } finally {
       setLoading(false);
     }
   };
 
-  /* Carga inicial → mensual */
   useEffect(() => {
     fetchBalance('MONTH');
   }, [activeVehicle]);
@@ -125,63 +141,131 @@ export default function ReportsScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>Reportes</Text>
 
-        {/* BALANCE */}
+        {subtitle ? (
+        <Text style={styles.subtitle}>{subtitle}</Text>
+        ) : null}
+
         <BalanceCard balance={balance} />
 
-        {/* BOTONES */}
         <View style={styles.actions}>
-          <ReportButton
-            label="Reporte mensual"
-            active={rangeType === 'MONTH'}
-            onPress={() => {
-              setRangeType('MONTH');
-              fetchBalance('MONTH');
-            }}
-          />
+          <ReportButton label="Reporte mensual" onPress={() => {
+            setRangeType('MONTH');
+            fetchBalance('MONTH');
+          }} active={rangeType === 'MONTH'} />
 
-          <ReportButton
-            label="Reporte semanal"
-            active={rangeType === 'WEEK'}
-            onPress={() => {
-              setRangeType('WEEK');
-              fetchBalance('WEEK');
-            }}
-          />
+          <ReportButton label="Reporte semanal" onPress={() => {
+            setRangeType('WEEK');
+            fetchBalance('WEEK');
+          }} active={rangeType === 'WEEK'} />
 
-          <ReportButton
-            label="Reporte diario"
-            active={rangeType === 'DAY'}
-            onPress={() => {
-              setRangeType('DAY');
-              fetchBalance('DAY');
-            }}
-          />
+          <ReportButton label="Reporte diario" onPress={() => {
+            setRangeType('DAY');
+            fetchBalance('DAY');
+          }} active={rangeType === 'DAY'} />
 
-          <ReportButton
-            label="Histórico"
-            active={rangeType === 'ALL'}
-            onPress={() => {
-              setRangeType('ALL');
-              fetchBalance('ALL');
-            }}
-          />
+          <ReportButton label="Histórico" onPress={() => {
+            setRangeType('ALL');
+            fetchBalance('ALL');
+          }} active={rangeType === 'ALL'} />
 
           <ReportButton
             label="Personalizado"
-            onPress={() => {
-              Alert.alert(
-                'Próximamente',
-                'El reporte personalizado estará disponible pronto'
-              );
-            }}
+            onPress={() => setShowCustom(true)}
           />
         </View>
       </View>
+
+      {/* MODAL PERSONALIZADO */}
+      <Modal transparent visible={showCustom} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Reporte personalizado</Text>
+
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowStartPicker(true)}
+            >
+              <Text>Desde: {startDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.input}
+              onPress={() => setShowEndPicker(true)}
+            >
+              <Text>Hasta: {endDate.toLocaleDateString()}</Text>
+            </TouchableOpacity>
+
+            {showStartPicker && (
+              <DateTimePicker
+                value={startDate}
+                mode="date"
+                onChange={(e, date) => {
+                  setShowStartPicker(false);
+                  if (date) setStartDate(date);
+                }}
+              />
+            )}
+
+            {showEndPicker && (
+              <DateTimePicker
+                value={endDate}
+                mode="date"
+                onChange={(e, date) => {
+                  setShowEndPicker(false);
+                  if (date) setEndDate(date);
+                }}
+              />
+            )}
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={styles.cancel}
+                onPress={() => setShowCustom(false)}
+              >
+                <Text>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.confirm}
+                onPress={() => {
+                  if (startDate > endDate) {
+                    Alert.alert('Fechas inválidas');
+                    return;
+                  }
+
+                  setRangeType('CUSTOM');
+                  setShowCustom(false);
+                  fetchBalance('CUSTOM', {
+                    start: startDate,
+                    end: endDate,
+                  });
+                }}
+              >
+                <Text style={{ color: '#fff', fontWeight: '600' }}>
+                  Generar
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
 
-/* Styles */
+function ReportButton({ label, onPress, active }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.button, active && styles.buttonActive]}
+    >
+      <Text style={[styles.buttonText, active && styles.buttonTextActive]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -211,10 +295,48 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#333',
     textAlign: 'center',
   },
   buttonTextActive: {
     color: '#fff',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
+  modal: {
+    backgroundColor: '#fff',
+    padding: 24,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: '#F3F3EE',
+    padding: 14,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 12,
+  },
+  cancel: {
+    padding: 12,
+  },
+  confirm: {
+    backgroundColor: '#2ECC71',
+    padding: 12,
+    borderRadius: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
   },
 });
