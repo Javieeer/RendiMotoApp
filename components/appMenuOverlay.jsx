@@ -132,6 +132,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             label="Configuración"
             onPress={() => {
               onClose();
+              router.push('/settings');
             }}
           />
 
