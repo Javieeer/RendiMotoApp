@@ -59,10 +59,10 @@ export default function SettingsScreen() {
 
         {/* 📊 RANGO POR DEFECTO */}
         <SettingCard
-          icon="bar-chart-outline"
-          title="Rango por defecto"
-          subtitle="Define cómo se muestran tus reportes"
-          onPress={() => router.push('/settings/reports')}
+          icon="key-outline"
+          title="Seguridad"
+          subtitle="Actualiza tu contraseña y más"
+          onPress={() => router.push('/settings/security')}
         />
 
       </View>
