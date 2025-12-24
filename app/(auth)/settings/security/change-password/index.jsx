@@ -134,7 +134,7 @@ export default function ChangePassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#F3F3EE",
     padding: 20,
   },
   title: {
