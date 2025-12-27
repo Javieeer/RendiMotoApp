@@ -60,7 +60,7 @@ export function AuthProvider({ children }) {
     resetVehicles();
     setUser(null);
     setIsAuthenticated(false);
-    AsyncStorage.clear();
+    /* AsyncStorage.clear(); */
     router.replace('/login');
   };
 

@@ -1,3 +1,4 @@
+import { useAuth } from '@/context/authContext';
 import { useMenu } from '@/context/menuContext';
 import { useVehicle } from '@/context/vehicleContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,10 +9,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AppHeader() {
 
+  const { user } = useAuth();
   const router = useRouter();
   const { openMenu } = useMenu();
   const { activeVehicle } = useVehicle();
   const insets = useSafeAreaInsets();
+
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Usuario';
 
   return (
     <View
@@ -32,10 +36,10 @@ export default function AppHeader() {
       </TouchableOpacity>
 
       <View style={styles.center}>
-        <Text style={styles.greeting}>Hola de nuevo</Text>
+        <Text style={styles.greeting}>Hola de nuevo {firstName}</Text>
         {activeVehicle ? (
           <Text style={styles.vehicle}>
-            {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
+            Vehículo activo: {activeVehicle.plate} - {activeVehicle.brand} {activeVehicle.model}
           </Text>
         ) : (
           <Text style={styles.vehiclePlaceholder}>

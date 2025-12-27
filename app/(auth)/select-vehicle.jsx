@@ -44,7 +44,7 @@ export default function SelectVehicleScreen() {
       {/* FOOTER */}
       <View style={styles.footer}>
         <TouchableOpacity
-            onPress={() => router.push('/vehicles/create')}
+            onPress={() => router.push('/vehicles/form')}
             style={{
               padding: 14,
               borderRadius: 8,

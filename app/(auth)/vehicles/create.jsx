@@ -37,7 +37,7 @@ export default function CreateVehicleScreen() {
           style={styles.button}
           onPress={() => {
             // luego iremos al formulario real
-            console.log('Ir a formulario de vehículo');
+            router.push('/vehicles/form');
           }}
         >
           <Text style={styles.buttonText}>Agregar vehículo</Text>

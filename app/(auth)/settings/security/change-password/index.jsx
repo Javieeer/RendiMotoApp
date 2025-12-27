@@ -1,14 +1,12 @@
 import AppHeader from "@/components/appHeader";
 import { useAuth } from "@/context/authContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function ChangePassword() {
 
-  const router = useRouter();
-  const { user } = useAuth(); 
+  const { user, logout } = useAuth();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -70,15 +68,22 @@ export default function ChangePassword() {
       /* Si todo salió bien */
       Alert.alert(
         "Contraseña actualizada",
-        "Tu contraseña fue cambiada correctamente",
-        [{ text: "OK", onPress: () => router.push("/home") }]
+        "Por seguridad, debes iniciar sesión nuevamente",
+        [
+          {
+            text: "OK",
+            onPress: async () => {
+              await logout();
+            },
+          },
+        ]
       );
 
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      Alert.alert("Error", "No se pudo conectar con el servidor");
+      Alert.alert("Error", "No se pudo conectar con el servidor " + error.message);
     } finally {
       setLoading(false);
     }

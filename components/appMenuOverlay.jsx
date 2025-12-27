@@ -137,10 +137,11 @@ export default function AppMenuOverlay({ visible, onClose }) {
           />
 
           <MenuItem
-            icon="help-circle-outline"
-            label="Ayuda"
+            icon="send-outline"
+            label="Comentarios"
             onPress={() => {
               onClose();
+              router.push('/feedback');
             }}
           />
 
