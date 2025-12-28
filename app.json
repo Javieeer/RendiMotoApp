@@ -19,7 +19,9 @@
         "monochromeImage": "./assets/images/rendimoto-logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "versionCode": 1,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.javierz03.rendimoto"
     },
     "web": {
       "output": "static",
@@ -43,6 +45,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9b6a328d-998c-4cb4-b02c-19172c059732"
+      }
     }
   }
 }
