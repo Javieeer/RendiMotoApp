@@ -4,7 +4,7 @@
     "slug": "rendimoto",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/rendimoto-logo.png",
+    "icon": "./assets/images/rendimoto_logo.png",
     "scheme": "RendiMotoApp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -25,14 +25,14 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/rendimoto-logo.png"
+      "favicon": "./assets/images/rendimoto_logo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/rendimoto-logo.png",
+          "image": "./assets/images/rendimoto_logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
