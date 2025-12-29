@@ -4,12 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Alert,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 export default function Feedback() {
@@ -78,6 +78,7 @@ export default function Feedback() {
         <TextInput
           style={styles.textarea}
           placeholder="Escribe tu comentario aquí..."
+          placeholderTextColor="#999"
           multiline
           numberOfLines={5}
           value={message}
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
   },
   textarea: {
     backgroundColor: "#fff",
+    color: '#000',
     borderRadius: 12,
     padding: 14,
     fontSize: 15,

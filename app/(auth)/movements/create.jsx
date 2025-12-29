@@ -177,6 +177,7 @@ export default function CreateMovementScreen() {
 
         <TextInput
           placeholder="Monto"
+          placeholderTextColor="#999"
           keyboardType="numeric"
           value={form.amount}
           onChangeText={(v) => update('amount', v)}
@@ -185,6 +186,7 @@ export default function CreateMovementScreen() {
 
         <TextInput
           placeholder="Descripción"
+          placeholderTextColor="#999"
           value={form.description}
           onChangeText={(v) => update('description', v)}
           style={styles.input}
@@ -192,6 +194,7 @@ export default function CreateMovementScreen() {
 
         <TextInput
           placeholder="Odómetro "
+          placeholderTextColor="#999"
           keyboardType="numeric"
           value={form.odometer}
           onChangeText={(v) => update('odometer', v)}
@@ -228,6 +231,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#fff',
+    color: '#000',
     borderRadius: 8,
     padding: 14,
     fontSize: 16,

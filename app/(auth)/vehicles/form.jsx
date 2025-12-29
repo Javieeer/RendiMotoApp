@@ -61,6 +61,7 @@ export default function VehicleFormScreen() {
             <TextInput
             style={styles.input}
             placeholder="Placa (ABC123)"
+            placeholderTextColor="#999"
             value={plate}
             onChangeText={setPlate}
             />
@@ -68,6 +69,7 @@ export default function VehicleFormScreen() {
             <TextInput
             style={styles.input}
             placeholder="Marca (BAJAJ)"
+            placeholderTextColor="#999"
             value={brand}
             onChangeText={setBrand}
             />
@@ -75,6 +77,7 @@ export default function VehicleFormScreen() {
             <TextInput
             style={styles.input}
             placeholder="Modelo (Pulsar NS200)"
+            placeholderTextColor="#999"
             value={model}
             onChangeText={setModel}
             />
@@ -83,6 +86,7 @@ export default function VehicleFormScreen() {
             <TextInput
                 style={[styles.input, styles.half]}
                 placeholder="Año (2020)"
+                placeholderTextColor="#999"
                 keyboardType="numeric"
                 value={year}
                 onChangeText={setYear}
@@ -91,6 +95,7 @@ export default function VehicleFormScreen() {
             <TextInput
                 style={[styles.input, styles.half]}
                 placeholder="Kilometraje (15000)"
+                placeholderTextColor="#999"
                 keyboardType="numeric"
                 value={mileage}
                 onChangeText={setMileage}
@@ -164,6 +169,7 @@ const styles = StyleSheet.create({
 
   input: {
     backgroundColor: '#F9FAFB',
+    color: '#000',
     borderRadius: 12,
     padding: 14,
     fontSize: 15,

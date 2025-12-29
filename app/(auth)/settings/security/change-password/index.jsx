@@ -101,6 +101,7 @@ export default function ChangePassword() {
         <TextInput
           style={styles.input}
           placeholder="Contraseña actual"
+          placeholderTextColor="#999"
           secureTextEntry
           value={currentPassword}
           onChangeText={setCurrentPassword}
@@ -109,6 +110,7 @@ export default function ChangePassword() {
         <TextInput
           style={styles.input}
           placeholder="Nueva contraseña"
+          placeholderTextColor="#999"
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
@@ -117,6 +119,7 @@ export default function ChangePassword() {
         <TextInput
           style={styles.input}
           placeholder="Confirmar nueva contraseña"
+          placeholderTextColor="#999"
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -155,6 +158,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
+    color: '#000',
     borderRadius: 12,
     padding: 14,
     fontSize: 15,

@@ -175,33 +175,54 @@ export default function Register() {
           </TouchableOpacity>
         </View>
 
-        <TextInput placeholder="Número de documento" style={styles.input}
-          onChangeText={(v) => update('documentNumber', v)} />
+        <TextInput 
+          placeholder="Número de documento" 
+          placeholderTextColor="#999"
+          style={styles.input}
+          onChangeText={(v) => update('documentNumber', v)}
+        />
 
         <TextInput
           placeholder="Nombre completo"
+          placeholderTextColor="#999"
           style={styles.input}
           onChangeText={(v) => update('fullName', v)}
         />
 
-        <TextInput placeholder="Ciudad" style={[
+        <TextInput 
+          placeholder="Ciudad" 
+          placeholderTextColor="#999"
+          style={[
             styles.input,
             locationError ? styles.inputEnabled : styles.inputDisabled,
           ]} value={form.city} editable={locationError}
-          onChangeText={(v) => update('city', v)} />
+          onChangeText={(v) => update('city', v)} 
+        />
 
-        <TextInput placeholder="Teléfono" keyboardType="phone-pad"
+        <TextInput 
+          placeholder="Teléfono" 
+          placeholderTextColor="#999"
+          keyboardType="phone-pad"
           style={styles.input}
-          onChangeText={(v) => update('phoneNumber', v)} />
+          onChangeText={(v) => update('phoneNumber', v)}
+        />
 
-        <TextInput placeholder="Correo" keyboardType="email-address"
+        <TextInput 
+          placeholder="Correo" 
+          placeholderTextColor="#999"
+          keyboardType="email-address"
           autoCapitalize="none"
           style={styles.input}
-          onChangeText={(v) => update('email', v)} />
+          onChangeText={(v) => update('email', v)}
+        />
 
-        <TextInput placeholder="Contraseña" secureTextEntry
+        <TextInput 
+          placeholder="Contraseña" 
+          placeholderTextColor="#999"
+          secureTextEntry
           style={styles.input}
-          onChangeText={(v) => update('password', v)} />
+          onChangeText={(v) => update('password', v)}
+        />
 
         <TouchableOpacity
           style={[
@@ -238,6 +259,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#fff',
+    color: '#000',
     borderRadius: 8,
     padding: 14,
     marginBottom: 12,
