@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,6 +20,7 @@ export default function LoginScreen() {
   const router = useRouter();
   const { login } = useAuth();
 
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     email: '',
     password: '',
@@ -34,6 +36,7 @@ export default function LoginScreen() {
 
   /* Función para iniciar sesión */
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const payload = {
         email: form.email.trim().toLowerCase(),
@@ -105,6 +108,8 @@ export default function LoginScreen() {
       }
 
       alert('No se pudo conectar con el servidor');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -139,10 +144,10 @@ export default function LoginScreen() {
 
         <TouchableOpacity
           style={[styles.button, !isFormValid && styles.buttonDisabled]}
-          disabled={!isFormValid}
+          disabled={!isFormValid || loading}
           onPress={handleLogin}
         >
-          <Text style={styles.buttonText}>Entrar</Text>
+          {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.buttonText}>Entrar</Text> }
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
