@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+# 🏍️ RendiMoto App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+RendiMoto es una aplicación móvil para Android dirigida a domiciliarios que desean controlar la rentabilidad de su vehículo.\
+Permite registrar ingresos y gastos, visualizar balances y mantener organizada la información operativa del día a día.
 
-## Get started
+La app está desarrollada con Expo + React Native, y se comunica con un backend en Java + Spring Boot + mysql
 
-1. Install dependencies
+Desarrollada por Javier Zapata como repaso de 3er semestre de Ing. En sistemas
+
+## 🚀 Características principales
+
+- Registro de ingresos y egresos
+- Cálculo de balance y rentabilidad
+- Autenticación segura
+- Gestión de vehículos
+- Interfaz optimizada para Android
+- Diseño enfocado en uso real por domiciliarios
+
+## 🆕 Novedades — v1.3
+
+- ✅ Corrección del bug de navegación en Android
+- - Ajuste de layouts para evitar superposición con la barra de navegación del sistema
+- - Mejor visualización en dispositivos con botones virtuales activos
+- Mejoras menores de estabilidad
+
+## 🛠️ Tecnologías
+
+- Frontend: Expo, React Native, Expo Router
+- Backend: JAVA + Spring Boot, JWT, MySQL
+- Build: EAS Build (APK)
+- Plataforma objetivo: Android
+
+## 📦 Instalación (desarrollo)
+
+1. Instalar dependencias:
 
    ```bash
    npm install
    ```
 
-2. Start the app
+2. Ejecutar en modo desarrollo:
 
    ```bash
    npx expo start
    ```
+   
+Nota: El proyecto está enfocado exclusivamente en Android.
 
-In the output, you'll find options to open the app in a
+## 🔐 Variables de entorno
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+La app utiliza variables públicas de Expo:
 
 ```bash
-npm run reset-project
+EXPO_PUBLIC_API_URL=https://tu-backend.com
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Estas deben configurarse en:
+- .env (desarrollo local)
+- EAS Environment Variables (builds)
 
-## Learn more
+## 📱 Estado del proyecto
 
-To learn more about developing your project with Expo, look at the following resources:
+RendiMoto se encuentra en fase de pruebas reales con usuarios domiciliarios, con mejoras continuas basadas en feedback.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 📄 Licencia
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Este proyecto está bajo la licencia MIT.
