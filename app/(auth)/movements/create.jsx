@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 
+
 export default function CreateMovementScreen() {
 
   const { type } = useLocalSearchParams(); // INCOME | EXPENSE

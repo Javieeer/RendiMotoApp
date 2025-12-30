@@ -2,11 +2,12 @@ import { useRouter } from 'expo-router';
 import { Text, TouchableOpacity, View } from 'react-native';
 import MovementItem from './movementItem';
 
+
 export default function MovementsList({ movements }) {
 
   const router = useRouter();
 
-  /* Render a message if no movements exist */
+  /* Message if there are no movements */
   if (!movements || movements.length === 0) {
     return (
       <Text style={{ marginTop: 16, color: '#666' }}>

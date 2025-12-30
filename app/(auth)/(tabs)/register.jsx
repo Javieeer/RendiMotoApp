@@ -2,6 +2,7 @@ import AppHeader from '@/components/appHeader';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+
 export default function RegisterScreen() {
   
   const router = useRouter();

@@ -5,6 +5,7 @@ import { useVehicle } from './vehicleContext';
 
 const AuthContext = createContext(null);
 
+
 export function AuthProvider({ children }) {
 
   const router = useRouter();

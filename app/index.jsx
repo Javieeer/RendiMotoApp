@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+
 export default function Home() {
 
   const logo = require('../assets/images/rendimoto_logo.png');

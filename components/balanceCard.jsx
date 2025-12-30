@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+
 export default function BalanceCard({ balance }) {
 
   if (!balance) return null;

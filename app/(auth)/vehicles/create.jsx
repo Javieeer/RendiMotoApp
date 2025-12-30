@@ -3,6 +3,7 @@ import { useVehicle } from '@/context/vehicleContext';
 import { useRouter } from 'expo-router';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+
 export default function CreateVehicleScreen() {
 
   const router = useRouter();

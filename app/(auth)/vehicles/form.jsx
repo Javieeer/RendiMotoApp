@@ -103,13 +103,13 @@ export default function VehicleFormScreen() {
             </View>
 
             <DateInput
-                label="Vencimiento SOAT"
+                label="Expedición SOAT"
                 value={soatExpiration}
                 onChange={setSoatExpiration}
             />
 
             <DateInput
-                label="Vencimiento Tecnomecánica"
+                label="Expedición Tecnomecánica"
                 value={tecnoExpiration}
                 onChange={setTecnoExpiration}
             />

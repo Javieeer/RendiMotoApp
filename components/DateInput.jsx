@@ -4,7 +4,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const formatDate = (date) => date.toISOString().split('T')[0];
 
+
 export default function DateInput({ label, value, onChange }) {
+  
   const [showPicker, setShowPicker] = useState(false);
 
   const dateValue = value ? new Date(value) : new Date();

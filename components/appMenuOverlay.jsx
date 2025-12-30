@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+
 export default function AppMenuOverlay({ visible, onClose }) {
 
   const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -85,7 +86,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             </Text>
             {activeVehicle ? (
               <Text style={styles.vehicle}>
-                {activeVehicle.plate} · {activeVehicle.brand} {activeVehicle.model}
+                {activeVehicle.plate} · {activeVehicle.model}
               </Text>
             ) : (
               <Text style={styles.vehiclePlaceholder}>
@@ -96,7 +97,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
 
           <View style={{ height: 1, backgroundColor: '#EEE', marginVertical: 12 }} />
 
-          {/* ACCIONES */}
+          {/* SWAP VEHICLE */}
           <MenuItem
             icon="swap-horizontal"
             label="Cambiar vehículo"
@@ -106,6 +107,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             }}
           />
 
+          {/* MOVEMENTS */}
           <MenuItem
             icon="list"
             label="Ver todos los movimientos"
@@ -115,6 +117,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             }}
           />
 
+          {/* REPORTS */}
           <MenuItem
             icon="bar-chart"
             label="Reportes"
@@ -136,6 +139,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             }}
           />
 
+          {/* FEEDBACK */}
           <MenuItem
             icon="send-outline"
             label="Comentarios"

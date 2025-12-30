@@ -2,8 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useState } from 'react';
 
 const VehicleContext = createContext(null);
-
 const VEHICLE_KEY = 'activeVehicleId';
+
 
 export function VehicleProvider({ children }) {
 

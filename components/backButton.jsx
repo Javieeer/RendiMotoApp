@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
+/* Componente para mostrar un botón de retroceso */
 type Props = {
   label?: string;
 };

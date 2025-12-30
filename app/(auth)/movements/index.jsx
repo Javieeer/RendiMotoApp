@@ -9,9 +9,11 @@ import {
   Text
 } from 'react-native';
 
+
 export default function MovementsScreen() {
 
   const { activeVehicle } = useVehicle();
+  
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
 

@@ -8,6 +8,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
+
 export default function HomeScreen() {
 
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function HomeScreen() {
 
   let isMounted = true;
 
+  /* Cargar movimientos y balance */
   const loadData = async () => {
     const currentVehicleId = activeVehicle.id;
 

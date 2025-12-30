@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
+
 export default function MovementDetailScreen() {
 
   const { movement } = useLocalSearchParams();

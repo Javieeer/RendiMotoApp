@@ -5,12 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
 import {
-    Alert,
-    Modal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 /* Utils */
@@ -70,13 +70,14 @@ const getSubtitleByRange = (type, range) => {
   }
 };
 
+
 export default function ReportsScreen() {
+  
   const { activeVehicle } = useVehicle();
 
   const [loading, setLoading] = useState(false);
   const [balance, setBalance] = useState(null);
   const [rangeType, setRangeType] = useState('MONTH');
-
   /* Personalizado */
   const [showCustom, setShowCustom] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -85,6 +86,7 @@ export default function ReportsScreen() {
   const [showEndPicker, setShowEndPicker] = useState(false);
   const [subtitle, setSubtitle] = useState('');
 
+  /* Fetch balance data */
   const fetchBalance = async (type, customRange = null) => {
     if (!activeVehicle) return;
 
@@ -130,6 +132,7 @@ export default function ReportsScreen() {
     }
   };
 
+  /* Initial fetch */
   useEffect(() => {
     fetchBalance('MONTH');
   }, [activeVehicle]);
@@ -253,6 +256,7 @@ export default function ReportsScreen() {
   );
 }
 
+/* Report button component */
 function ReportButton({ label, onPress, active }) {
   return (
     <TouchableOpacity

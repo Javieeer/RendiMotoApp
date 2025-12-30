@@ -37,6 +37,7 @@ function AlertCard({ title, days, type }) {
   );
 }
 
+
 export default function AlertsScreen() {
 
   const { activeVehicle } = useVehicle();

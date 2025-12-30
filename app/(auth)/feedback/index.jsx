@@ -12,13 +12,16 @@ import {
   View,
 } from "react-native";
 
+
 export default function Feedback() {
+
   const router = useRouter();
   const { user } = useAuth();
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /* Submit feedback */
   const handleSubmit = async () => {
     if (!message.trim()) {
       Alert.alert("Error", "Escribe un comentario antes de enviar");

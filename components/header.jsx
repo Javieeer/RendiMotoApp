@@ -1,6 +1,7 @@
 import BackButton from '@/components/backButton';
 import { StyleSheet, Text, View } from 'react-native';
 
+
 export default function Header({ title }: { title: string }) {
 
   return (
