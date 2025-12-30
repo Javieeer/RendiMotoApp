@@ -39,7 +39,7 @@ export default function AppHeader() {
         <Text style={styles.greeting}>Hola de nuevo {firstName}</Text>
         {activeVehicle ? (
           <Text style={styles.vehicle}>
-            Vehículo activo: {activeVehicle.plate} - {activeVehicle.brand} {activeVehicle.model}
+            Vehículo activo: {activeVehicle.plate} - {activeVehicle.model}
           </Text>
         ) : (
           <Text style={styles.vehiclePlaceholder}>

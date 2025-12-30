@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function AppMenuOverlay({ visible, onClose }) {
@@ -13,6 +14,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
 
   const { activeVehicle } = useVehicle();
   const { user, logout } = useAuth();
+  const insets = useSafeAreaInsets();
 
   /* Animate the menu */
   useEffect(() => {
@@ -75,7 +77,10 @@ export default function AppMenuOverlay({ visible, onClose }) {
       <Animated.View
         style={[
           styles.panel,
-          { transform: [{ translateY: slideAnim }] },
+          { 
+            transform: [{ translateY: slideAnim }],
+            paddingBottom: insets.bottom + 12,
+          },
         ]}
       >
         <View>
@@ -86,7 +91,7 @@ export default function AppMenuOverlay({ visible, onClose }) {
             </Text>
             {activeVehicle ? (
               <Text style={styles.vehicle}>
-                {activeVehicle.plate} · {activeVehicle.model}
+                {activeVehicle.plate} - {activeVehicle.model}
               </Text>
             ) : (
               <Text style={styles.vehiclePlaceholder}>
